@@ -1,0 +1,22 @@
+.csm-metabox-grid {
+	display: grid;
+	grid-template-columns: 180px 1fr;
+	gap: 10px 14px;
+	max-width: 760px;
+}
+
+.csm-metabox-grid label {
+	font-weight: 600;
+}
+
+.csm-metabox-grid input[type="text"],
+.csm-metabox-grid input[type="number"] {
+	width: 100%;
+	max-width: 420px;
+}
+
+.csm-metabox-help {
+	color: #666;
+	font-size: 12px;
+	margin: 6px 0 0;
+}
