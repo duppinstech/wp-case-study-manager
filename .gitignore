@@ -1,0 +1,15 @@
+# Build artifacts
+*.zip
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Cursor local data
+.cursor/
+
+# Dependency/vendor folders (if added later)
+node_modules/
+vendor/

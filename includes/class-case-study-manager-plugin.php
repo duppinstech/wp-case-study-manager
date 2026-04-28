@@ -70,15 +70,6 @@ final class Plugin {
 		add_filter( 'manage_edit-' . self::POST_TYPE . '_sortable_columns', array( $this, 'sortable_columns' ) );
 		add_action( 'pre_get_posts', array( $this, 'sort_by_repair_amount' ) );
 
-		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
-	}
-
-	public function load_textdomain(): void {
-		load_plugin_textdomain(
-			'case-study-manager',
-			false,
-			dirname( plugin_basename( CSM_PLUGIN_FILE ) ) . '/languages'
-		);
 	}
 
 	public function activate(): void {
@@ -295,7 +286,9 @@ final class Plugin {
 			return;
 		}
 
-		if ( ! isset( $_POST[ self::NONCE_NAME ] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST[ self::NONCE_NAME ] ) ), self::NONCE_ACTION ) ) {
+		$nonce = filter_input( INPUT_POST, self::NONCE_NAME, FILTER_UNSAFE_RAW );
+		$nonce = is_string( $nonce ) ? sanitize_text_field( $nonce ) : '';
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, self::NONCE_ACTION ) ) {
 			return;
 		}
 
@@ -307,15 +300,15 @@ final class Plugin {
 			return;
 		}
 
-		$clean_text = static function ( string $key ): string {
-			return isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : '';
-		};
+		$location_city  = filter_input( INPUT_POST, 'ra_location_city', FILTER_UNSAFE_RAW );
+		$location_state = filter_input( INPUT_POST, 'ra_location_state', FILTER_UNSAFE_RAW );
+		$case_type      = filter_input( INPUT_POST, 'ra_case_type', FILTER_UNSAFE_RAW );
 
-		update_post_meta( $post_id, self::META_LOCATION_CITY, $clean_text( 'ra_location_city' ) );
-		update_post_meta( $post_id, self::META_LOCATION_STATE, $clean_text( 'ra_location_state' ) );
-		update_post_meta( $post_id, self::META_CASE_TYPE, $clean_text( 'ra_case_type' ) );
+		update_post_meta( $post_id, self::META_LOCATION_CITY, sanitize_text_field( (string) $location_city ) );
+		update_post_meta( $post_id, self::META_LOCATION_STATE, sanitize_text_field( (string) $location_state ) );
+		update_post_meta( $post_id, self::META_CASE_TYPE, sanitize_text_field( (string) $case_type ) );
 
-		$repair_raw = isset( $_POST['ra_repair_amount'] ) ? wp_unslash( $_POST['ra_repair_amount'] ) : '';
+		$repair_raw = filter_input( INPUT_POST, 'ra_repair_amount', FILTER_UNSAFE_RAW );
 		$repair_raw = is_string( $repair_raw ) ? trim( $repair_raw ) : '';
 		if ( '' === $repair_raw ) {
 			update_post_meta( $post_id, self::META_REPAIR_AMOUNT, '' );

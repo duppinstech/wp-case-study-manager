@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$csm_headers = get_file_data(
+$case_study_manager_headers = get_file_data(
 	__FILE__,
 	array(
 		'Version' => 'Version',
@@ -26,7 +26,7 @@ $csm_headers = get_file_data(
 	'plugin'
 );
 
-define( 'CSM_VERSION', ! empty( $csm_headers['Version'] ) ? $csm_headers['Version'] : '1.1.0' );
+define( 'CSM_VERSION', ! empty( $case_study_manager_headers['Version'] ) ? $case_study_manager_headers['Version'] : '1.1.0' );
 define( 'CSM_PLUGIN_FILE', __FILE__ );
 define( 'CSM_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CSM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -36,22 +36,22 @@ require_once CSM_PLUGIN_DIR . 'includes/class-case-study-manager-plugin.php';
 /**
  * Bootstrap the plugin.
  */
-function csm_run() {
+function case_study_manager_run() {
 	return DuppinsTech\CaseStudies\Plugin::instance();
 }
 
-csm_run();
+case_study_manager_run();
 
 register_activation_hook(
 	CSM_PLUGIN_FILE,
 	static function () {
-		csm_run()->activate();
+		case_study_manager_run()->activate();
 	}
 );
 
 register_deactivation_hook(
 	CSM_PLUGIN_FILE,
 	static function () {
-		csm_run()->deactivate();
+		case_study_manager_run()->deactivate();
 	}
 );
