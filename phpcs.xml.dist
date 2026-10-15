@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<ruleset name="Case Study Manager">
+	<description>WordPress coding standards for Case Study Manager.</description>
+	<file>.</file>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
+
+	<rule ref="WordPress-Core">
+		<exclude name="WordPress.Files.FileName"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals"/>
+	</rule>
+
+	<config name="minimum_supported_wp_version" value="5.8"/>
+</ruleset>

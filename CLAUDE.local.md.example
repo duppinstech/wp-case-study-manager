@@ -1,0 +1,7 @@
+# Local overrides
+
+Copy this file to `CLAUDE.local.md`. That copy is gitignored. It stacks on `CLAUDE.md` and does not replace it. Keep secrets out of both files.
+
+- Local WordPress path:
+- PHP binary:
+- Staging site URL:

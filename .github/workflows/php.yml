@@ -1,0 +1,22 @@
+name: PHP
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  syntax-and-rows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "7.4"
+      - name: PHP syntax
+        run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+      - name: Detail row checks
+        run: php tests/detail-rows-test.php
+      - name: Coding standards
+        run: |
+          composer install --no-interaction --no-progress
+          vendor/bin/phpcs

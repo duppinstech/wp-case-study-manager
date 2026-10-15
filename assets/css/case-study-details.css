@@ -1,0 +1,30 @@
+.csm-details {
+	margin: 1.5rem 0 0;
+}
+
+.csm-details dl {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 0.5rem 1rem;
+	margin: 0;
+}
+
+.csm-details dt,
+.csm-details dd {
+	margin: 0;
+}
+
+.csm-details dt {
+	font-weight: 600;
+}
+
+@media (max-width: 40em) {
+	.csm-details dl {
+		grid-template-columns: 1fr;
+		gap: 0.15rem 0;
+	}
+
+	.csm-details dd {
+		margin-bottom: 0.75rem;
+	}
+}
