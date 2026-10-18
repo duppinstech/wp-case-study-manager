@@ -6,7 +6,8 @@
       "Read(./wp-config.php)",
       "Bash(rm -rf:*)",
       "Bash(git push:*)",
-      "Bash(git reset --hard:*)"
+      "Bash(git reset --hard:*)",
+      "Bash(git clean:*)"
     ]
   },
   "hooks": {
