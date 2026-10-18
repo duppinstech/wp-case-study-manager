@@ -1,7 +1,37 @@
 # Local overrides
 
-Copy this file to `CLAUDE.local.md`. That copy is gitignored. It stacks on `CLAUDE.md` and does not replace it. Keep secrets out of both files.
+Copy this file to `CLAUDE.local.md`. That copy is gitignored. It stacks on `CLAUDE.md` and does not replace it. Keep secrets out of this example. The admin password belongs only in `CLAUDE.local.md`.
 
-- Local WordPress path:
-- PHP binary:
+## Local WordPress (Docker)
+
+Compose project: `case-study-manager-local`
+
+- Site URL: http://127.0.0.1:8093
+- wp-admin URL: http://127.0.0.1:8093/wp-admin/
+- Start: `docker compose up -d`
+- Stop: `docker compose down`
+- PHP: `docker compose exec -T wordpress php`
+- WP-CLI: `docker compose --profile cli run --rm wpcli wp`
+- Logs: `docker compose logs -f wordpress`
+- Admin user:
+- Admin password:
+- Mounted extras:
+
+## Site state
+
+- WordPress:
+- PHP:
+- MariaDB:
+- Active plugins:
+- Permalinks: `/%postname%/`
+
+## Preferences
+
+- Use Docker for every local check.
+- Start the site only when a check needs it, and stop it after.
+- Never run `docker compose down -v` without asking.
+
+## This machine
+
+- Hook shell:
 - Staging site URL:
