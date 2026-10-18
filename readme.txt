@@ -50,6 +50,12 @@ No. Any fee or access gate is settled outside the plugin, before installation.
 
 In WordPress posts of type `case_study`, taxonomy `case_study_category`, and the post meta keys listed in the plugin description.
 
+== Screenshots ==
+
+1. Case Studies list with location, type, and repair amount columns.
+2. Case Study Details fields on the case study editor.
+3. Location, type, and total repair amount on a published case study page.
+
 == Changelog ==
 
 = 1.2.0 =
