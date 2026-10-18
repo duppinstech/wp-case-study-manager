@@ -19,8 +19,9 @@ CLAUDE.local.md
 .claude/settings.local.json
 .claude/worktrees/
 
-# Secrets and local env
+# Secrets and local env. The example stays tracked.
 .env*
+!.env.example
 
 # Build and log output
 dist/
