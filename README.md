@@ -47,6 +47,29 @@ This plugin has no price, upgrade path, or license check. Any fee or access gate
 
 WordPress-packaged details (stable tag, FAQ, uninstall notes) live in [`readme.txt`](readme.txt).
 
+## Local development
+
+From this repository, install the dev tools:
+
+```text
+composer install
+```
+
+That installs PHP_CodeSniffer and the WordPress coding standards. The plugin runs inside WordPress. This repository does not include a local WordPress site.
+
+## Tests
+
+```text
+composer test
+composer lint
+```
+
+`composer test` runs `php tests/detail-rows-test.php`. `composer lint` runs `phpcs`. `composer format` runs `phpcbf`.
+
+## Release
+
+There is no build step and no release workflow. The version is the `Version` header in `case-study-manager.php` and the Stable tag in [`readme.txt`](readme.txt). To ship a copy, follow Installation above.
+
 ## Repository layout
 
 | Path | Purpose |

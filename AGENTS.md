@@ -47,3 +47,26 @@ Handoff:
 ```
 
 Each finding names a severity (`blocker`, `high`, `medium`, `low`), the file or behavior, and the owner of the fix.
+
+## Commands
+
+From this repository:
+
+```text
+composer install
+composer lint
+composer test
+```
+
+`composer lint` runs `phpcs`. `composer test` runs `php tests/detail-rows-test.php`. There is no build command. `composer format` runs `phpcbf`.
+
+## Conventions
+
+WordPress PHP: tabs, `array()`, Yoda conditions, and the `case-study-manager` text domain. `phpcs.xml.dist` uses WordPress-Core.
+
+## Do not touch
+
+- Meta keys `_ra_location_city`, `_ra_location_state`, `_ra_case_type`, `_ra_repair_amount`, and `_ra_location_full`.
+- Case study posts, terms, and meta on uninstall.
+- Price, upgrade path, or license gate inside the plugin.
+- `.env` files, `CLAUDE.local.md`, and `.claude/settings.local.json`.
