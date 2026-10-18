@@ -2,6 +2,9 @@
 /**
  * Core plugin class.
  *
+ * Copyright (C) 2026 Odell Duppins / Duppins Technology
+ * License: GPL-2.0-or-later
+ *
  * @package DuppinsTech\CaseStudies
  */
 
@@ -27,11 +30,11 @@ final class Plugin {
 	/**
 	 * Meta keys (unchanged from snippet compatibility).
 	 */
-	public const META_LOCATION_CITY   = '_ra_location_city';
-	public const META_LOCATION_STATE  = '_ra_location_state';
-	public const META_CASE_TYPE       = '_ra_case_type';
-	public const META_REPAIR_AMOUNT   = '_ra_repair_amount';
-	public const META_LOCATION_FULL   = '_ra_location_full';
+	public const META_LOCATION_CITY  = '_ra_location_city';
+	public const META_LOCATION_STATE = '_ra_location_state';
+	public const META_CASE_TYPE      = '_ra_case_type';
+	public const META_REPAIR_AMOUNT  = '_ra_repair_amount';
+	public const META_LOCATION_FULL  = '_ra_location_full';
 
 	private const NONCE_ACTION = 'ra_case_study_details_save';
 	private const NONCE_NAME   = 'ra_case_study_details_nonce';
@@ -61,6 +64,9 @@ final class Plugin {
 		add_action( 'init', array( $this, 'add_elementor_support' ), 20 );
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_public_assets' ) );
+		add_filter( 'the_content', array( $this, 'append_details_to_content' ), 12 );
+		add_shortcode( 'case_study_details', array( $this, 'shortcode_details' ) );
 
 		add_action( 'add_meta_boxes', array( $this, 'register_meta_box' ) );
 		add_action( 'save_post_' . self::POST_TYPE, array( $this, 'save_meta_box' ), 10, 2 );
@@ -69,7 +75,6 @@ final class Plugin {
 		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'render_column' ), 10, 2 );
 		add_filter( 'manage_edit-' . self::POST_TYPE . '_sortable_columns', array( $this, 'sortable_columns' ) );
 		add_action( 'pre_get_posts', array( $this, 'sort_by_repair_amount' ) );
-
 	}
 
 	public function activate(): void {
@@ -164,6 +169,208 @@ final class Plugin {
 		);
 	}
 
+	/**
+	 * Front-end styles for the single case study page and the shortcode.
+	 */
+	public function enqueue_public_assets(): void {
+		$load = is_singular( self::POST_TYPE );
+		if ( ! $load ) {
+			$post = get_post();
+			$load = $post && has_shortcode( (string) $post->post_content, 'case_study_details' );
+		}
+		if ( ! $load ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'csm-case-study-details',
+			CSM_PLUGIN_URL . 'assets/css/case-study-details.css',
+			array(),
+			CSM_VERSION
+		);
+	}
+
+	/**
+	 * Append saved details when the theme prints the case study content.
+	 *
+	 * @param string $content Post content.
+	 * @return string
+	 */
+	public function append_details_to_content( $content ) {
+		if ( ! is_singular( self::POST_TYPE ) || ! in_the_loop() || ! is_main_query() ) {
+			return $content;
+		}
+		if ( has_shortcode( (string) $content, 'case_study_details' ) ) {
+			return $content;
+		}
+		$post_id = (int) get_the_ID();
+		if ( post_password_required( $post_id ) ) {
+			return $content;
+		}
+		return $content . $this->render_details_for_post( $post_id );
+	}
+
+	/**
+	 * Shortcode for Elementor or any layout that does not print post content.
+	 *
+	 * @param array<string, string>|string $atts Attributes.
+	 * @return string
+	 */
+	public function shortcode_details( $atts ) {
+		$atts    = shortcode_atts(
+			array(
+				'id' => 0,
+			),
+			$atts,
+			'case_study_details'
+		);
+		$post_id = (int) $atts['id'];
+		if ( $post_id <= 0 ) {
+			$post_id = (int) get_the_ID();
+		}
+		return $this->render_details_for_post( $post_id );
+	}
+
+	/**
+	 * Details for a case study the current visitor is allowed to read.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return string
+	 */
+	public function render_details_for_post( $post_id ) {
+		$post_id = (int) $post_id;
+		$post    = get_post( $post_id );
+		if ( ! $post instanceof \WP_Post || self::POST_TYPE !== $post->post_type ) {
+			return '';
+		}
+		if ( post_password_required( $post ) ) {
+			return '';
+		}
+		if ( 'publish' !== $post->post_status && ! current_user_can( 'read_post', $post->ID ) ) {
+			return '';
+		}
+
+		return self::details_markup(
+			self::public_detail_rows(
+				get_post_meta( $post->ID, self::META_LOCATION_CITY, true ),
+				get_post_meta( $post->ID, self::META_LOCATION_STATE, true ),
+				get_post_meta( $post->ID, self::META_CASE_TYPE, true ),
+				get_post_meta( $post->ID, self::META_REPAIR_AMOUNT, true )
+			)
+		);
+	}
+
+	/**
+	 * City and state on one line. Blank parts are left out.
+	 *
+	 * @param mixed $city City.
+	 * @param mixed $state State.
+	 * @return string
+	 */
+	public static function location_line( $city, $state ): string {
+		$city  = trim( (string) $city );
+		$state = trim( (string) $state );
+		$line  = $city;
+		if ( '' !== $city && '' !== $state ) {
+			$line .= ', ';
+		}
+		$line .= $state;
+		return trim( $line );
+	}
+
+	/**
+	 * Repair amount for display, or an empty string when there is nothing to show.
+	 *
+	 * @param mixed $amount Stored amount.
+	 * @return string
+	 */
+	public static function repair_amount_display( $amount ): string {
+		if ( null === $amount || false === $amount || '' === $amount ) {
+			return '';
+		}
+		if ( ! is_numeric( $amount ) ) {
+			return '';
+		}
+		$formatted = function_exists( 'number_format_i18n' )
+			? number_format_i18n( (float) $amount, 2 )
+			: number_format( (float) $amount, 2 );
+		return '$' . $formatted;
+	}
+
+	/**
+	 * Rows the public page shows: location, type, and repair amount when present.
+	 *
+	 * @param mixed $city City.
+	 * @param mixed $state State.
+	 * @param mixed $type Job type.
+	 * @param mixed $amount Repair amount.
+	 * @return array<string, string>
+	 */
+	public static function public_detail_rows( $city, $state, $type, $amount ): array {
+		$rows     = array();
+		$location = self::location_line( $city, $state );
+		if ( '' !== $location ) {
+			$rows['location'] = $location;
+		}
+		$type = trim( (string) $type );
+		if ( '' !== $type ) {
+			$rows['type'] = $type;
+		}
+		$amount_display = self::repair_amount_display( $amount );
+		if ( '' !== $amount_display ) {
+			$rows['repair_amount'] = $amount_display;
+		}
+		return $rows;
+	}
+
+	/**
+	 * @param array<string, string> $rows Detail rows.
+	 * @return string
+	 */
+	public static function details_markup( array $rows ): string {
+		$labels = array(
+			'location'      => self::translate( 'Location' ),
+			'type'          => self::translate( 'Type' ),
+			'repair_amount' => self::translate( 'Total Repair Amount' ),
+		);
+		$items  = '';
+		foreach ( $labels as $key => $label ) {
+			if ( ! isset( $rows[ $key ] ) || '' === (string) $rows[ $key ] ) {
+				continue;
+			}
+			$items .= '<dt>' . self::escape_text( $label ) . '</dt>';
+			$items .= '<dd>' . self::escape_text( (string) $rows[ $key ] ) . '</dd>';
+		}
+		if ( '' === $items ) {
+			return '';
+		}
+		$label = self::escape_text( self::translate( 'Case study details' ) );
+		return '<section class="csm-details" aria-label="' . $label . '"><dl>' . $items . '</dl></section>';
+	}
+
+	/**
+	 * @param string $text Source string.
+	 * @return string
+	 */
+	private static function translate( $text ): string {
+		if ( function_exists( '__' ) ) {
+			// Callers pass string literals. This wrapper exists so tests can run without WordPress.
+			return __( $text, 'case-study-manager' ); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
+		}
+		return $text;
+	}
+
+	/**
+	 * @param string $value Text.
+	 * @return string
+	 */
+	private static function escape_text( $value ): string {
+		if ( function_exists( 'esc_html' ) ) {
+			return esc_html( $value );
+		}
+		return htmlspecialchars( (string) $value, ENT_QUOTES, 'UTF-8' );
+	}
+
 	public function register_post_type_and_taxonomy(): void {
 		$labels = array(
 			'name'               => __( 'Case Studies', 'case-study-manager' ),
@@ -189,7 +396,7 @@ final class Plugin {
 				'has_archive'       => true,
 				'rewrite'           => array( 'slug' => 'case-studies' ),
 				'menu_icon'         => 'dashicons-hammer',
-				'supports'          => array( 'title', 'editor', 'thumbnail', 'excerpt', 'revisions' ),
+				'supports'          => array( 'title', 'editor', 'thumbnail', 'excerpt', 'revisions', 'custom-fields' ),
 				'hierarchical'      => false,
 				'show_in_nav_menus' => true,
 				'capability_type'   => 'post',
@@ -316,16 +523,14 @@ final class Plugin {
 			update_post_meta( $post_id, self::META_REPAIR_AMOUNT, floatval( $repair_raw ) );
 		}
 
-		$city  = trim( (string) get_post_meta( $post_id, self::META_LOCATION_CITY, true ) );
-		$state = trim( (string) get_post_meta( $post_id, self::META_LOCATION_STATE, true ) );
-
-		$location_full = $city;
-		if ( $city && $state ) {
-			$location_full .= ', ';
-		}
-		$location_full .= $state;
-
-		update_post_meta( $post_id, self::META_LOCATION_FULL, trim( $location_full ) );
+		update_post_meta(
+			$post_id,
+			self::META_LOCATION_FULL,
+			self::location_line(
+				get_post_meta( $post_id, self::META_LOCATION_CITY, true ),
+				get_post_meta( $post_id, self::META_LOCATION_STATE, true )
+			)
+		);
 	}
 
 	/**
@@ -352,10 +557,10 @@ final class Plugin {
 	 */
 	public function render_column( $column, $post_id ): void {
 		if ( 'ra_location' === $column ) {
-			$city  = get_post_meta( $post_id, self::META_LOCATION_CITY, true );
-			$state = get_post_meta( $post_id, self::META_LOCATION_STATE, true );
-
-			$out = trim( $city . ( ( $city && $state ) ? ', ' : '' ) . $state );
+			$out = self::location_line(
+				get_post_meta( $post_id, self::META_LOCATION_CITY, true ),
+				get_post_meta( $post_id, self::META_LOCATION_STATE, true )
+			);
 			echo $out ? esc_html( $out ) : '&mdash;';
 			return;
 		}
@@ -367,12 +572,8 @@ final class Plugin {
 		}
 
 		if ( 'ra_repair_amount' === $column ) {
-			$amount = get_post_meta( $post_id, self::META_REPAIR_AMOUNT, true );
-			if ( '' === $amount || null === $amount ) {
-				echo '&mdash;';
-				return;
-			}
-			echo esc_html( '$' . number_format_i18n( (float) $amount, 2 ) );
+			$display = self::repair_amount_display( get_post_meta( $post_id, self::META_REPAIR_AMOUNT, true ) );
+			echo '' === $display ? '&mdash;' : esc_html( $display );
 		}
 	}
 

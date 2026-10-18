@@ -13,3 +13,20 @@ Thumbs.db
 # Dependency/vendor folders (if added later)
 node_modules/
 vendor/
+
+# Claude Code personal overrides. Never commit.
+CLAUDE.local.md
+.claude/settings.local.json
+.claude/worktrees/
+
+# Secrets and local env
+.env*
+
+# Build and log output
+dist/
+build/
+*.log
+
+# Python noise, if a tool drops it here
+__pycache__/
+.venv/

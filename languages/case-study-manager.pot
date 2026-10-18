@@ -1,0 +1,146 @@
+# Copyright (C) 2026 Odell Duppins / Duppins Technology
+msgid ""
+msgstr ""
+"Project-Id-Version: Case Study Manager 1.2.0\n"
+"Report-Msgid-Bugs-To: odell@duppinstech.com\n"
+"POT-Creation-Date: 2026-10-14 22:45-0400\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: case-study-manager\n"
+
+#: includes/class-case-study-manager-plugin.php:379
+msgid "Add New"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:380
+msgid "Add New Case Study"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:418
+msgid "Add New Category"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:387
+msgid "All Case Studies"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:415
+msgid "All Categories"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:376 includes/class-case-study-manager-plugin.php:378
+msgid "Case Studies"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:377
+msgid "Case Study"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:412
+msgid "Case Study Categories"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:413
+msgid "Case Study Category"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:439
+msgid "Case Study Details"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:348
+msgid "Case study details"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:420
+msgid "Categories"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:381
+msgid "Edit Case Study"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:416
+msgid "Edit Category"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:333 includes/class-case-study-manager-plugin.php:546
+msgid "Location"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:460
+msgid "Location (City)"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:463
+msgid "Location (State)"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:474
+msgid "Meta keys:"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:382
+msgid "New Case Study"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:419
+msgid "New Category Name"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:385
+msgid "No case studies found"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:386
+msgid "No case studies found in Trash"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:548
+msgid "Repair Amount"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:384
+msgid "Search Case Studies"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:414
+msgid "Search Categories"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:335
+msgid "Total Repair Amount"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:469
+msgid "Total Repair Amount ($)"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:334 includes/class-case-study-manager-plugin.php:466 includes/class-case-study-manager-plugin.php:547
+msgid "Type"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:417
+msgid "Update Category"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:383
+msgid "View Case Study"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:470
+msgid "e.g., 15000"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:461
+msgid "e.g., Charlotte"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:464
+msgid "e.g., NC"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php:467
+msgid "e.g., Remodel, Roofing, Foundation Repair"
+msgstr ""
