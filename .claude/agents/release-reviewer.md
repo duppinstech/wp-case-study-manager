@@ -37,7 +37,7 @@ Leave `.git`, `.claude`, `.mcp.json`, `CLAUDE.local.md`, agent docs, and zips ou
 
 ## Notices
 
-- `Author` is Odell Duppins Jr. / Duppins Technology, consistent with `OWNERSHIP.md`.
+- The plugin header `Author` is Duppins Technology. Copyright notices name Odell Duppins / Duppins Technology, consistent with `OWNERSHIP.md`.
 - License lines stay GPL-2.0-or-later.
 - Changelog does not claim departments signed off unless `PLAN.md` records those verdicts.
 - Do not publish to WordPress.org or to the client's site from this review. That wait is for Odell.

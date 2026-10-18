@@ -2,7 +2,7 @@
 
 A custom [WordPress](https://wordpress.org/) plugin that registers a **Case Study** custom post type, hierarchical categories, and structured meta fields (location, project type, and total repair amount). It is built for **RAHyman Restoration, Inc.** and works with the block editor REST API and **Elementor**.
 
-**Author:** [Odell Duppins Jr.](https://duppinstech.com) · **Company:** Duppins Technology · **Website:** [duppinstech.com](https://duppinstech.com)
+**Author:** [Duppins Technology](https://duppinstech.com)
 
 The plugin code is personally owned by Odell Duppins / Duppins Technology. RAHyman Restoration, Inc. is the client this work is for and does not own the source. See [OWNERSHIP.md](OWNERSHIP.md).
 
@@ -68,13 +68,14 @@ composer lint
 
 ## Release
 
-There is no build step and no release workflow. The version is the `Version` header in `case-study-manager.php` and the Stable tag in [`readme.txt`](readme.txt). To ship a copy, follow Installation above.
+Pushing a `v*` tag on `main` runs `.github/workflows/release.yml`. The tag must match the `Version` header in `case-study-manager.php`, the `CSM_VERSION` fallback, and the Stable tag in [`readme.txt`](readme.txt). The workflow runs lint and tests, then `bin/build-zip.sh` builds `case-study-manager.zip` (one top-level `case-study-manager/` folder). `bin/release-notes.sh` writes the release body. Tagging and publishing wait for Odell.
 
 ## Repository layout
 
 | Path | Purpose |
 |------|--------|
 | [`case-study-manager.php`](case-study-manager.php) | Plugin bootstrap and hooks |
+| [`includes/class-csm-github-updater.php`](includes/class-csm-github-updater.php) | GitHub Releases updater |
 | [`includes/class-case-study-manager-plugin.php`](includes/class-case-study-manager-plugin.php) | Main plugin class |
 | [`assets/css/admin-metabox.css`](assets/css/admin-metabox.css) | Admin metabox styles |
 | [`assets/css/case-study-details.css`](assets/css/case-study-details.css) | Front-end case study details |

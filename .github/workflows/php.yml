@@ -20,3 +20,7 @@ jobs:
         run: |
           composer install --no-interaction --no-progress
           vendor/bin/phpcs
+      - name: Release notes for the current version
+        run: |
+          version=$(sed -n 's/^ \* Version:[[:space:]]*//p' case-study-manager.php | tr -d '\r')
+          bash bin/release-notes.sh "$version" case-study-manager.php "$RUNNER_TEMP/release-notes.md"

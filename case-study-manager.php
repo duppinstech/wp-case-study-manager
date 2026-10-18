@@ -1,17 +1,18 @@
 <?php
 /**
  * Plugin Name:       Case Study Manager
- * Plugin URI:        https://duppinstech.com
+ * Plugin URI:        https://github.com/duppinstech/wp-case-study-manager
  * Description:       A custom case study manager plugin for RAHyman Restoration, Inc.
  * Version:           1.2.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
- * Author:            Odell Duppins Jr.
+ * Author:            Duppins Technology
  * Author URI:        https://duppinstech.com
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       case-study-manager
  * Domain Path:       /languages
+ * Update URI:        https://github.com/duppinstech/wp-case-study-manager
  *
  * @package DuppinsTech\CaseStudies
  */
@@ -47,6 +48,21 @@ define( 'CSM_VERSION', ! empty( $case_study_manager_headers['Version'] ) ? $case
 define( 'CSM_PLUGIN_FILE', __FILE__ );
 define( 'CSM_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CSM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+
+require_once CSM_PLUGIN_DIR . 'includes/class-csm-github-updater.php';
+
+// Updates from GitHub Releases. Booted at load so WP-Cron and background auto-updates see releases.
+// Disable with define( 'CSM_DISABLE_GITHUB_UPDATER', true ).
+CSM_GitHub_Updater::boot(
+	array(
+		'file'    => CSM_PLUGIN_FILE,
+		'version' => CSM_VERSION,
+		'owner'   => 'duppinstech',
+		'repo'    => 'wp-case-study-manager',
+		'prefix'  => 'csm',
+		'asset'   => 'case-study-manager.zip',
+	)
+);
 
 require_once CSM_PLUGIN_DIR . 'includes/class-case-study-manager-plugin.php';
 

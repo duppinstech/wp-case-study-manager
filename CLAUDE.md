@@ -30,7 +30,7 @@ Public `case_study` post type, hierarchical `case_study_category` taxonomy, and 
 - Uninstall must leave case study posts, terms, and meta in place. That content belongs to the client or its customers.
 - Escape output, sanitize input, verify nonces, and check `current_user_can` before writes.
 - WordPress style: tabs, `array()`, Yoda conditions, text domain on translator functions.
-- Copyright and `Author` fields name Odell Duppins / Duppins Technology. "Odell Duppins Jr." in existing headers is the same person.
+- Copyright fields name Odell Duppins / Duppins Technology. The plugin header `Author` is Duppins Technology.
 - Use the client name only to say who the work is for.
 - Do not add a price, upgrade path, or license gate. Commercial terms stay outside the plugin.
 - Do not invent a signed client agreement or present department reviews as legal advice.
