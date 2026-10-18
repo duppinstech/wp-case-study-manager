@@ -9,6 +9,8 @@ paths:
 
 `php tests/detail-rows-test.php` checks location lines, public rows, and escaping without WordPress. Metabox nonce, REST auth, and uninstall behavior still need the WordPress test library. Absence of those tests is a gap in `PLAN.md`, not a passing run.
 
+Smoke test, when a check needs WordPress: http://127.0.0.1:8093 (compose project `case-study-manager-local`). Start with `docker compose up -d`, then stop with `docker compose down`. Credentials are in `CLAUDE.local.md`. Do not run `docker compose down -v` without asking.
+
 When tests are added:
 
 - Use PHPUnit with the WordPress test suite, PHP 7.4 compatible.

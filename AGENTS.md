@@ -4,6 +4,10 @@ Roster for Claude Code. The parent session is engineering. It implements the cha
 
 Read `OWNERSHIP.md` before delegating. Odell Duppins / Duppins Technology owns this work. RAHyman Restoration, Inc. is the client the work is for and does not own the source.
 
+## Plugin facts
+
+- Local site: Docker, http://127.0.0.1:8093 (compose project case-study-manager-local; details and credentials in CLAUDE.local.md)
+
 ## Parent session
 
 Engineering. Implements features and fixes, applies approved edits, and does not mark the task done until the departmental workflow finishes or Odell says to stop after code.
