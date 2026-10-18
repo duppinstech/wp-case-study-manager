@@ -18,11 +18,19 @@ The plugin has no price, upgrade path, or license check. Commercial terms are ha
 
 Meta keys remain compatible with earlier snippet-based setups: `_ra_location_city`, `_ra_location_state`, `_ra_case_type`, `_ra_repair_amount`, and derived `_ra_location_full`.
 
+= Support =
+
+Support: [support@duppinstech.com](mailto:support@duppinstech.com). Made by [Duppins Technology](https://duppinstech.com).
+
 == Installation ==
 
 1. Upload the `case-study-manager` folder to `/wp-content/plugins/`, or upload the plugin ZIP via **Plugins &rarr; Add New &rarr; Upload Plugin**.
 2. Activate **Case Study Manager** through the **Plugins** menu in WordPress.
 3. Visit **Settings &rarr; Permalinks** and click **Save Changes** once if archives or single URLs return 404 (activation normally flushes rewrite rules).
+
+= Updates =
+
+New releases appear under Dashboard → Updates.
 
 == Frequently Asked Questions ==
 
@@ -60,3 +68,8 @@ In WordPress posts of type `case_study`, taxonomy `case_study_category`, and the
 
 = 1.0.0 =
 * Initial release: custom post type, taxonomy, metabox, admin columns, Elementor support.
+
+== Upgrade Notice ==
+
+= 1.2.0 =
+Shows location, type, and repair amount on the published case study page.
