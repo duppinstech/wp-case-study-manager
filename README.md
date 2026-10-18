@@ -76,6 +76,7 @@ Pushing a `v*` tag on `main` runs `.github/workflows/release.yml`. The tag must 
 |------|--------|
 | [`case-study-manager.php`](case-study-manager.php) | Plugin bootstrap and hooks |
 | [`includes/class-csm-github-updater.php`](includes/class-csm-github-updater.php) | GitHub Releases updater |
+| [`includes/class-case-study-manager-plugin-info.php`](includes/class-case-study-manager-plugin-info.php) | Plugins screen links and View details |
 | [`includes/class-case-study-manager-plugin.php`](includes/class-case-study-manager-plugin.php) | Main plugin class |
 | [`assets/css/admin-metabox.css`](assets/css/admin-metabox.css) | Admin metabox styles |
 | [`assets/css/case-study-details.css`](assets/css/case-study-details.css) | Front-end case study details |

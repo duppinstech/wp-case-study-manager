@@ -4,6 +4,9 @@
 	<file>.</file>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/tests/*</exclude-pattern>
+	<!-- Verbatim Duppins standards. Do not reformat them in this plugin. -->
+	<exclude-pattern>*/includes/class-csm-github-updater.php</exclude-pattern>
+	<exclude-pattern>*/includes/class-case-study-manager-plugin-info.php</exclude-pattern>
 
 	<rule ref="WordPress-Core">
 		<exclude name="WordPress.Files.FileName"/>

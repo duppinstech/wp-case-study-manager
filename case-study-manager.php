@@ -64,6 +64,18 @@ CSM_GitHub_Updater::boot(
 	)
 );
 
+require_once CSM_PLUGIN_DIR . 'includes/class-case-study-manager-plugin-info.php';
+
+// Plugins screen links and the View details modal. No settings screen and no public guide yet.
+CSM_Plugin_Info::boot(
+	array(
+		'file'         => CSM_PLUGIN_FILE,
+		'settings_url' => '',
+		'help_url'     => '',
+		'support_url'  => 'mailto:support@duppinstech.com',
+	)
+);
+
 require_once CSM_PLUGIN_DIR . 'includes/class-case-study-manager-plugin.php';
 
 /**
