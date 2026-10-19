@@ -33,7 +33,7 @@ The zip that an editor uploads contains:
 - `readme.txt`
 - `LICENSE`
 
-Leave `.git`, `.claude`, `.mcp.json`, `CLAUDE.local.md`, agent docs, and zips out of that package. The git repo can keep the SDLC files.
+`.distignore` lists everything that stays out of that package, including `.git`, `.claude`, `.mcp.json`, `CLAUDE.local.md`, agent docs, and zips. `bin/build-zip.sh` reads that file. The git repo keeps the SDLC files.
 
 ## Notices
 

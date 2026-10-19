@@ -2,7 +2,7 @@
 # (single top-level folder named case-study-manager — no version suffix).
 # The GitHub release asset is case-study-manager.zip.
 #
-# Keep the exclusion list in bin/build-zip.sh in sync when adding development-only files or directories.
+# Exclusions live in .distignore. bin/build-zip.sh reads that file.
 # Third-party actions are pinned to commit SHAs (comment shows the release); update them deliberately.
 #
 # Build runs with read-only permissions. Publish only receives the built artifact, attests its provenance,

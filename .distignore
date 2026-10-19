@@ -1,0 +1,41 @@
+# Paths excluded from the release zip (one per line, relative to repo root).
+# bin/build-zip.sh reads this file. The WordPress plugin package keeps:
+# case-study-manager.php, uninstall.php, includes/, assets/, languages/, readme.txt, LICENSE.
+
+.git
+.github
+.claude
+.cursor
+.mcp.json
+.gitignore
+.gitattributes
+.distignore
+bin
+tests
+phpcs.xml.dist
+composer.json
+composer.lock
+vendor
+node_modules
+
+CLAUDE.md
+CLAUDE.local.md
+CLAUDE.local.md.example
+AGENTS.md
+INTENT.md
+PLAN.md
+CONTRIBUTING.md
+OWNERSHIP.md
+SECURITY.md
+README.md
+CHANGELOG.md
+.editorconfig
+
+# Local copies and previous packages. Not part of the installed plugin.
+release/
+build/
+dist/
+docker-compose.yml
+.env
+.env.*
+*.zip

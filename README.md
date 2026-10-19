@@ -69,7 +69,7 @@ composer lint
 
 ## Release
 
-Pushing a `v*` tag on `main` runs `.github/workflows/release.yml`. The tag must match the `Version` header in `case-study-manager.php`, the `CSM_VERSION` fallback, and the Stable tag in [`readme.txt`](readme.txt). The workflow runs lint and tests, then `bin/build-zip.sh` builds `case-study-manager.zip` (one top-level `case-study-manager/` folder). `bin/release-notes.sh` writes the release body. Tagging and publishing wait for Odell.
+Pushing a `v*` tag on `main` runs `.github/workflows/release.yml`. The tag must match the `Version` header in `case-study-manager.php`, the `CSM_VERSION` fallback, and the Stable tag in [`readme.txt`](readme.txt). The workflow runs lint and tests, then `bin/build-zip.sh` builds `case-study-manager.zip` (one top-level `case-study-manager/` folder). Paths in [`.distignore`](.distignore) stay out of that zip. `bin/release-notes.sh` writes the release body. Tagging and publishing wait for Odell.
 
 ## Repository layout
 
