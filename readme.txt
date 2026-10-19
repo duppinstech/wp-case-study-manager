@@ -4,7 +4,7 @@ Tags: case-study, custom-post-type, elementor
 Requires at least: 5.8
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -58,6 +58,12 @@ In WordPress posts of type `case_study`, taxonomy `case_study_category`, and the
 
 == Changelog ==
 
+= 1.2.1 =
+* Show Description, Installation, FAQ, Screenshots, and Changelog in View details.
+* Add Sponsor and Support on the plugins screen.
+* Deliver updates from GitHub Releases.
+* Name Duppins Technology as the plugin author.
+
 = 1.2.0 =
 * Show location, type, and repair amount on the single case study page.
 * Expose the registered case study fields on the REST response by supporting custom fields.
@@ -76,6 +82,9 @@ In WordPress posts of type `case_study`, taxonomy `case_study_category`, and the
 * Initial release: custom post type, taxonomy, metabox, admin columns, Elementor support.
 
 == Upgrade Notice ==
+
+= 1.2.1 =
+Updates now come from GitHub Releases, and View details shows the guide and screenshots.
 
 = 1.2.0 =
 Shows location, type, and repair amount on the published case study page.

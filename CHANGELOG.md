@@ -7,6 +7,20 @@ and this project uses the version in the plugin header.
 
 ## [Unreleased]
 
+## [1.2.1]
+
+### Added
+
+- View details shows Description, Installation, FAQ, Screenshots, and Changelog from `readme.txt`.
+- Sponsor and Support links on the plugins screen.
+- Updates from GitHub Releases.
+- Screenshots of the case studies list, the details metabox, and a published case study page.
+
+### Changed
+
+- The plugin header Author is Duppins Technology.
+- Plugin URI and Update URI point at the GitHub repository.
+
 ## [1.2.0]
 
 ### Added

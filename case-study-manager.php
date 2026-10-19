@@ -3,7 +3,7 @@
  * Plugin Name:       Case Study Manager
  * Plugin URI:        https://github.com/duppinstech/wp-case-study-manager
  * Description:       A custom case study manager plugin for RAHyman Restoration, Inc.
- * Version:           1.2.0
+ * Version:           1.2.1
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            Duppins Technology
@@ -44,7 +44,7 @@ $case_study_manager_headers = get_file_data(
 	'plugin'
 );
 
-define( 'CSM_VERSION', ! empty( $case_study_manager_headers['Version'] ) ? $case_study_manager_headers['Version'] : '1.2.0' );
+define( 'CSM_VERSION', ! empty( $case_study_manager_headers['Version'] ) ? $case_study_manager_headers['Version'] : '1.2.1' );
 define( 'CSM_PLUGIN_FILE', __FILE__ );
 define( 'CSM_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CSM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
