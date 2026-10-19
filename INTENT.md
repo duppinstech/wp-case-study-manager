@@ -6,7 +6,7 @@ Odell Duppins / Duppins Technology owns the plugin code and maintains it. The cl
 
 ## Outcome
 
-A site editor can add a case study in wp-admin, file it under a category, and store location, type, and repair amount. A published case study page shows location (city and state), type, and repair amount under the content. `[case_study_details]` does the same when a layout does not print the post content. The block editor, the REST API, and Elementor can read those fields. Existing content that uses the `_ra_` meta keys keeps working. Removing the plugin does not delete that content.
+A site editor can add a case study in wp-admin, file it under a category, and store location, type, and repair amount. An administrator can add more detail fields. A published case study page shows the saved rows under the content. `[case_study_details]` does the same when a layout does not print the post content. The block editor, the REST API, and Elementor can read those fields. Existing content that uses the `_ra_` meta keys keeps working. Removing the plugin does not delete that content.
 
 ## Users
 
@@ -17,7 +17,7 @@ A site editor can add a case study in wp-admin, file it under a category, and st
 ## Constraints
 
 - This plugin stays for RAHyman Restoration, Inc. It is not being generalized.
-- Meta keys stay `_ra_location_city`, `_ra_location_state`, `_ra_case_type`, `_ra_repair_amount`, and derived `_ra_location_full`.
+- Meta keys `_ra_location_city`, `_ra_location_state`, `_ra_case_type`, `_ra_repair_amount`, and derived `_ra_location_full` stay. Extra detail fields use new `_csm_*` keys and do not replace those.
 - Uninstall does not delete posts, terms, or meta.
 - Authorship and copyright name Odell Duppins / Duppins Technology.
 - The client name appears only as who the work is for.

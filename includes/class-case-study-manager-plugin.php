@@ -12,6 +12,8 @@ namespace DuppinsTech\CaseStudies;
 
 defined( 'ABSPATH' ) || exit;
 
+require_once __DIR__ . '/class-case-study-detail-fields.php';
+
 /**
  * Singleton handling registration and hooks.
  */
@@ -70,6 +72,7 @@ final class Plugin {
 
 		add_action( 'add_meta_boxes', array( $this, 'register_meta_box' ) );
 		add_action( 'save_post_' . self::POST_TYPE, array( $this, 'save_meta_box' ), 10, 2 );
+		add_action( 'admin_menu', array( $this, 'register_detail_fields_page' ) );
 
 		add_filter( 'manage_edit-' . self::POST_TYPE . '_columns', array( $this, 'edit_columns' ) );
 		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'render_column' ), 10, 2 );
@@ -114,6 +117,17 @@ final class Plugin {
 				'sanitize_callback' => array( $this, 'sanitize_meta_repair_amount' ),
 			)
 		);
+
+		foreach ( $this->detail_fields() as $field ) {
+			if ( 'custom' !== $field['source'] ) {
+				continue;
+			}
+			$args = $string_args;
+			if ( 'text' !== $field['type'] ) {
+				$args['sanitize_callback'] = array( $this, 'sanitize_meta_repair_amount' );
+			}
+			register_post_meta( self::POST_TYPE, $field['meta_key'], $args );
+		}
 	}
 
 	/**
@@ -250,14 +264,50 @@ final class Plugin {
 			return '';
 		}
 
-		return self::details_markup(
-			self::public_detail_rows(
-				get_post_meta( $post->ID, self::META_LOCATION_CITY, true ),
-				get_post_meta( $post->ID, self::META_LOCATION_STATE, true ),
-				get_post_meta( $post->ID, self::META_CASE_TYPE, true ),
-				get_post_meta( $post->ID, self::META_REPAIR_AMOUNT, true )
-			)
+		return self::details_markup_rows( $this->public_rows_for_post( $post->ID ) );
+	}
+
+	/**
+	 * Saved field list, or the built-in list when the option is missing.
+	 *
+	 * @return array<int, array<string, string>>
+	 */
+	public function detail_fields(): array {
+		if ( ! function_exists( 'get_option' ) ) {
+			return DetailFields::defaults();
+		}
+		$stored = get_option( DetailFields::OPTION, null );
+		if ( null === $stored || false === $stored ) {
+			return DetailFields::defaults();
+		}
+		return DetailFields::normalize( $stored );
+	}
+
+	/**
+	 * Public rows for one case study, in the saved field order.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return array<int, array<string, string>>
+	 */
+	public function public_rows_for_post( $post_id ): array {
+		$post_id = (int) $post_id;
+		$fields  = $this->detail_fields();
+		$values  = array(
+			'city'          => get_post_meta( $post_id, self::META_LOCATION_CITY, true ),
+			'state'         => get_post_meta( $post_id, self::META_LOCATION_STATE, true ),
+			'type'          => get_post_meta( $post_id, self::META_CASE_TYPE, true ),
+			'repair_amount' => get_post_meta( $post_id, self::META_REPAIR_AMOUNT, true ),
 		);
+		foreach ( $fields as $field ) {
+			if ( 'custom' === $field['source'] ) {
+				$values[ $field['meta_key'] ] = get_post_meta( $post_id, $field['meta_key'], true );
+			}
+		}
+		$rows = DetailFields::ordered_public_rows( $fields, $values );
+		foreach ( $rows as $index => $row ) {
+			$rows[ $index ]['label'] = self::translate_known_label( $row['label'] );
+		}
+		return $rows;
 	}
 
 	/**
@@ -333,19 +383,56 @@ final class Plugin {
 			'type'          => self::translate( 'Type' ),
 			'repair_amount' => self::translate( 'Total Repair Amount' ),
 		);
-		$items  = '';
+		$list   = array();
 		foreach ( $labels as $key => $label ) {
 			if ( ! isset( $rows[ $key ] ) || '' === (string) $rows[ $key ] ) {
 				continue;
 			}
-			$items .= '<dt>' . self::escape_text( $label ) . '</dt>';
-			$items .= '<dd>' . self::escape_text( (string) $rows[ $key ] ) . '</dd>';
+			$list[] = array(
+				'label' => $label,
+				'value' => (string) $rows[ $key ],
+			);
+		}
+		return self::details_markup_rows( $list );
+	}
+
+	/**
+	 * @param array<int, array<string, string>> $rows Rows with label and value.
+	 * @return string
+	 */
+	public static function details_markup_rows( array $rows ): string {
+		$items = '';
+		foreach ( $rows as $row ) {
+			if ( ! is_array( $row ) || ! isset( $row['label'], $row['value'] ) || '' === (string) $row['value'] ) {
+				continue;
+			}
+			$items .= '<dt>' . self::escape_text( (string) $row['label'] ) . '</dt>';
+			$items .= '<dd>' . self::escape_text( (string) $row['value'] ) . '</dd>';
 		}
 		if ( '' === $items ) {
 			return '';
 		}
 		$label = self::escape_text( self::translate( 'Case study details' ) );
 		return '<section class="csm-details" aria-label="' . $label . '"><dl>' . $items . '</dl></section>';
+	}
+
+	/**
+	 * Translate the three built-in labels. A renamed or custom label is returned as stored.
+	 *
+	 * @param string $label Field label.
+	 * @return string
+	 */
+	private static function translate_known_label( $label ): string {
+		if ( 'Location' === $label ) {
+			return self::translate( 'Location' );
+		}
+		if ( 'Type' === $label ) {
+			return self::translate( 'Type' );
+		}
+		if ( 'Total Repair Amount' === $label ) {
+			return self::translate( 'Total Repair Amount' );
+		}
+		return $label;
 	}
 
 	/**
@@ -454,20 +541,43 @@ final class Plugin {
 		$location_state = get_post_meta( $post->ID, self::META_LOCATION_STATE, true );
 		$type           = get_post_meta( $post->ID, self::META_CASE_TYPE, true );
 		$repair_amount  = get_post_meta( $post->ID, self::META_REPAIR_AMOUNT, true );
+		$custom_values  = array();
+		foreach ( $this->detail_fields() as $field ) {
+			if ( 'custom' === $field['source'] ) {
+				$custom_values[ $field['meta_key'] ] = get_post_meta( $post->ID, $field['meta_key'], true );
+			}
+		}
 		?>
 
 		<div class="csm-metabox-grid">
-			<label for="duppins_ra_location_city"><?php esc_html_e( 'Location (City)', 'case-study-manager' ); ?></label>
-			<input type="text" id="duppins_ra_location_city" name="ra_location_city" value="<?php echo esc_attr( $location_city ); ?>" placeholder="<?php esc_attr_e( 'e.g., Charlotte', 'case-study-manager' ); ?>" autocomplete="address-level2" />
-
-			<label for="duppins_ra_location_state"><?php esc_html_e( 'Location (State)', 'case-study-manager' ); ?></label>
-			<input type="text" id="duppins_ra_location_state" name="ra_location_state" value="<?php echo esc_attr( $location_state ); ?>" placeholder="<?php esc_attr_e( 'e.g., NC', 'case-study-manager' ); ?>" autocomplete="address-level1" />
-
-			<label for="duppins_ra_case_type"><?php esc_html_e( 'Type', 'case-study-manager' ); ?></label>
-			<input type="text" id="duppins_ra_case_type" name="ra_case_type" value="<?php echo esc_attr( $type ); ?>" placeholder="<?php esc_attr_e( 'e.g., Remodel, Roofing, Foundation Repair', 'case-study-manager' ); ?>" />
-
-			<label for="duppins_ra_repair_amount"><?php esc_html_e( 'Total Repair Amount ($)', 'case-study-manager' ); ?></label>
-			<input type="number" id="duppins_ra_repair_amount" name="ra_repair_amount" value="<?php echo esc_attr( $repair_amount ); ?>" placeholder="<?php esc_attr_e( 'e.g., 15000', 'case-study-manager' ); ?>" step="0.01" min="0" inputmode="decimal" />
+			<?php foreach ( $this->detail_fields() as $field ) : ?>
+				<?php if ( 'builtin' === $field['source'] && 'location' === $field['id'] ) : ?>
+					<fieldset class="csm-metabox-group">
+						<legend><?php echo esc_html( self::translate_known_label( $field['label'] ) ); ?></legend>
+						<label for="duppins_ra_location_city"><?php esc_html_e( 'City', 'case-study-manager' ); ?></label>
+						<input type="text" id="duppins_ra_location_city" name="ra_location_city" value="<?php echo esc_attr( $location_city ); ?>" placeholder="<?php esc_attr_e( 'e.g., Charlotte', 'case-study-manager' ); ?>" autocomplete="address-level2" />
+						<label for="duppins_ra_location_state"><?php esc_html_e( 'State', 'case-study-manager' ); ?></label>
+						<input type="text" id="duppins_ra_location_state" name="ra_location_state" value="<?php echo esc_attr( $location_state ); ?>" placeholder="<?php esc_attr_e( 'e.g., NC', 'case-study-manager' ); ?>" autocomplete="address-level1" />
+					</fieldset>
+				<?php elseif ( 'builtin' === $field['source'] && 'type' === $field['id'] ) : ?>
+					<label for="duppins_ra_case_type"><?php echo esc_html( self::translate_known_label( $field['label'] ) ); ?></label>
+					<input type="text" id="duppins_ra_case_type" name="ra_case_type" value="<?php echo esc_attr( $type ); ?>" placeholder="<?php esc_attr_e( 'e.g., Remodel, Roofing, Foundation Repair', 'case-study-manager' ); ?>" />
+				<?php elseif ( 'builtin' === $field['source'] && 'repair_amount' === $field['id'] ) : ?>
+					<label for="duppins_ra_repair_amount"><?php echo esc_html( self::translate_known_label( $field['label'] ) ); ?> ($)</label>
+					<input type="number" id="duppins_ra_repair_amount" name="ra_repair_amount" value="<?php echo esc_attr( $repair_amount ); ?>" placeholder="<?php esc_attr_e( 'e.g., 15000', 'case-study-manager' ); ?>" step="0.01" min="0" inputmode="decimal" />
+				<?php elseif ( 'custom' === $field['source'] ) : ?>
+					<?php
+					$input_id = 'duppins_csm_' . $field['id'];
+					$value    = isset( $custom_values[ $field['meta_key'] ] ) ? $custom_values[ $field['meta_key'] ] : '';
+					?>
+					<label for="<?php echo esc_attr( $input_id ); ?>"><?php echo esc_html( $field['label'] ); ?><?php echo 'currency' === $field['type'] ? ' ($)' : ''; ?></label>
+					<?php if ( 'text' === $field['type'] ) : ?>
+						<input type="text" id="<?php echo esc_attr( $input_id ); ?>" name="csm_custom[<?php echo esc_attr( $field['meta_key'] ); ?>]" value="<?php echo esc_attr( $value ); ?>" />
+					<?php else : ?>
+						<input type="number" id="<?php echo esc_attr( $input_id ); ?>" name="csm_custom[<?php echo esc_attr( $field['meta_key'] ); ?>]" value="<?php echo esc_attr( $value ); ?>" step="0.01" min="0" inputmode="decimal" />
+					<?php endif; ?>
+				<?php endif; ?>
+			<?php endforeach; ?>
 		</div>
 
 		<p class="csm-metabox-help">
@@ -476,6 +586,11 @@ final class Plugin {
 			<code><?php echo esc_html( self::META_LOCATION_STATE ); ?></code>,
 			<code><?php echo esc_html( self::META_CASE_TYPE ); ?></code>,
 			<code><?php echo esc_html( self::META_REPAIR_AMOUNT ); ?></code>
+			<?php foreach ( $this->detail_fields() as $field ) : ?>
+				<?php if ( 'custom' === $field['source'] ) : ?>
+					, <code><?php echo esc_html( $field['meta_key'] ); ?></code>
+				<?php endif; ?>
+			<?php endforeach; ?>
 		</p>
 		<?php
 	}
@@ -522,6 +637,8 @@ final class Plugin {
 		} else {
 			update_post_meta( $post_id, self::META_REPAIR_AMOUNT, floatval( $repair_raw ) );
 		}
+
+		$this->save_custom_detail_fields( $post_id );
 
 		update_post_meta(
 			$post_id,
@@ -607,5 +724,272 @@ final class Plugin {
 			$query->set( 'meta_key', self::META_REPAIR_AMOUNT );
 			$query->set( 'orderby', 'meta_value_num' );
 		}
+	}
+
+	/**
+	 * Write custom detail values posted with the metabox. Missing inputs are left unchanged.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	private function save_custom_detail_fields( $post_id ): void {
+		// Nonce, post type, and edit_post were checked by save_meta_box().
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$posted = isset( $_POST['csm_custom'] ) ? wp_unslash( $_POST['csm_custom'] ) : array();
+		if ( ! is_array( $posted ) ) {
+			return;
+		}
+		foreach ( $this->detail_fields() as $field ) {
+			if ( 'custom' !== $field['source'] || ! array_key_exists( $field['meta_key'], $posted ) ) {
+				continue;
+			}
+			$raw = $posted[ $field['meta_key'] ];
+			if ( 'text' === $field['type'] ) {
+				update_post_meta( $post_id, $field['meta_key'], sanitize_text_field( is_string( $raw ) ? $raw : '' ) );
+				continue;
+			}
+			$raw = is_string( $raw ) ? trim( $raw ) : '';
+			if ( '' === $raw ) {
+				update_post_meta( $post_id, $field['meta_key'], '' );
+			} else {
+				update_post_meta( $post_id, $field['meta_key'], floatval( $raw ) );
+			}
+		}
+	}
+
+	/**
+	 * Case Studies → Detail fields. Administrators manage the list. Editors fill values on the case study.
+	 */
+	public function register_detail_fields_page(): void {
+		add_submenu_page(
+			'edit.php?post_type=' . self::POST_TYPE,
+			__( 'Detail fields', 'case-study-manager' ),
+			__( 'Detail fields', 'case-study-manager' ),
+			'manage_options',
+			DetailFields::PAGE_SLUG,
+			array( $this, 'render_detail_fields_page' )
+		);
+	}
+
+	/**
+	 * Settings screen for the ordered detail list.
+	 */
+	public function render_detail_fields_page(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die(
+				esc_html__( 'Sorry, you are not allowed to manage these fields.', 'case-study-manager' ),
+				'',
+				array( 'response' => 403 )
+			);
+		}
+
+		$this->handle_detail_fields_post();
+
+		$notice = filter_input( INPUT_GET, 'csm_notice', FILTER_UNSAFE_RAW );
+		$error  = filter_input( INPUT_GET, 'csm_error', FILTER_UNSAFE_RAW );
+		$notice = is_string( $notice ) ? sanitize_text_field( $notice ) : '';
+		$error  = is_string( $error ) ? sanitize_text_field( $error ) : '';
+		$fields = $this->detail_fields();
+		?>
+		<div class="wrap">
+			<h1><?php esc_html_e( 'Detail fields', 'case-study-manager' ); ?></h1>
+			<?php if ( 'saved' === $notice ) : ?>
+				<div class="notice notice-success"><p><?php esc_html_e( 'Detail fields saved.', 'case-study-manager' ); ?></p></div>
+			<?php endif; ?>
+			<?php echo wp_kses_post( self::detail_fields_error_notice( $error ) ); ?>
+			<p><?php esc_html_e( 'These fields appear on the published case study page and in the REST API, the same as city, type, and repair amount. There is no private setting.', 'case-study-manager' ); ?></p>
+			<p><?php esc_html_e( 'Removing a custom field hides it. Values already saved on case studies stay in the database.', 'case-study-manager' ); ?></p>
+			<form method="post" action="<?php echo esc_url( admin_url( 'edit.php?post_type=' . self::POST_TYPE . '&page=' . DetailFields::PAGE_SLUG ) ); ?>">
+				<?php wp_nonce_field( DetailFields::NONCE_ACTION, DetailFields::NONCE_NAME ); ?>
+				<table class="widefat striped">
+					<thead>
+						<tr>
+							<th scope="col"><?php esc_html_e( 'Order', 'case-study-manager' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Label', 'case-study-manager' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Type', 'case-study-manager' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Key', 'case-study-manager' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Remove', 'case-study-manager' ); ?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ( $fields as $index => $field ) : ?>
+							<?php $input_id = 'csm-field-' . $field['id']; ?>
+							<tr>
+								<td>
+									<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>-order">
+										<?php
+										echo esc_html(
+											sprintf(
+												/* translators: %s: field label */
+												__( 'Order for %s', 'case-study-manager' ),
+												$field['label']
+											)
+										);
+										?>
+									</label>
+									<input type="number" class="small-text" id="<?php echo esc_attr( $input_id ); ?>-order" name="csm_fields[<?php echo esc_attr( $field['id'] ); ?>][position]" value="<?php echo esc_attr( (string) ( ( $index + 1 ) * 10 ) ); ?>" step="1" />
+								</td>
+								<td>
+									<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>-label">
+										<?php
+										echo esc_html(
+											sprintf(
+												/* translators: %s: field label */
+												__( 'Label for %s', 'case-study-manager' ),
+												$field['label']
+											)
+										);
+										?>
+									</label>
+									<input type="text" class="regular-text" id="<?php echo esc_attr( $input_id ); ?>-label" name="csm_fields[<?php echo esc_attr( $field['id'] ); ?>][label]" value="<?php echo esc_attr( $field['label'] ); ?>" maxlength="120" />
+								</td>
+								<td><?php echo esc_html( self::detail_type_label( $field['type'] ) ); ?></td>
+								<td><?php echo wp_kses_post( self::detail_key_html( $field ) ); ?></td>
+								<td>
+									<?php if ( 'custom' === $field['source'] ) : ?>
+										<label for="<?php echo esc_attr( $input_id ); ?>-remove">
+											<input type="checkbox" id="<?php echo esc_attr( $input_id ); ?>-remove" name="csm_fields[<?php echo esc_attr( $field['id'] ); ?>][remove]" value="1" />
+											<?php
+											echo esc_html(
+												sprintf(
+													/* translators: %s: field label */
+													__( 'Remove %s', 'case-study-manager' ),
+													$field['label']
+												)
+											);
+											?>
+										</label>
+									<?php else : ?>
+										<span aria-hidden="true">&mdash;</span>
+										<span class="screen-reader-text"><?php esc_html_e( 'Built-in fields stay on the case study.', 'case-study-manager' ); ?></span>
+									<?php endif; ?>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+				<h2><?php esc_html_e( 'Add a detail field', 'case-study-manager' ); ?></h2>
+				<p class="description">
+					<?php esc_html_e( 'The key is created from the label, starts with _csm_, and cannot be changed. Example: Insurance carrier is stored as', 'case-study-manager' ); ?>
+					<code>_csm_insurance_carrier</code>.
+					<?php esc_html_e( 'A published case study page and the REST API will show the value.', 'case-study-manager' ); ?>
+				</p>
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><label for="csm-new-label"><?php esc_html_e( 'Label', 'case-study-manager' ); ?></label></th>
+						<td><input type="text" class="regular-text" id="csm-new-label" name="csm_new_label" maxlength="120" /></td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="csm-new-type"><?php esc_html_e( 'Type', 'case-study-manager' ); ?></label></th>
+						<td>
+							<select id="csm-new-type" name="csm_new_type">
+								<option value="text"><?php esc_html_e( 'Text', 'case-study-manager' ); ?></option>
+								<option value="number"><?php esc_html_e( 'Number', 'case-study-manager' ); ?></option>
+								<option value="currency"><?php esc_html_e( 'Currency', 'case-study-manager' ); ?></option>
+							</select>
+						</td>
+					</tr>
+				</table>
+				<?php submit_button( __( 'Save detail fields', 'case-study-manager' ) ); ?>
+			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Save the field list from the settings screen, then redirect back to it.
+	 */
+	private function handle_detail_fields_post(): void {
+		$nonce = filter_input( INPUT_POST, DetailFields::NONCE_NAME, FILTER_UNSAFE_RAW );
+		if ( ! is_string( $nonce ) ) {
+			return;
+		}
+		$nonce = sanitize_text_field( $nonce );
+		if ( ! wp_verify_nonce( $nonce, DetailFields::NONCE_ACTION ) || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified above.
+		$posted = isset( $_POST['csm_fields'] ) ? wp_unslash( $_POST['csm_fields'] ) : array();
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified above.
+		$new_label = isset( $_POST['csm_new_label'] ) ? wp_unslash( $_POST['csm_new_label'] ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified above.
+		$new_type = isset( $_POST['csm_new_type'] ) ? wp_unslash( $_POST['csm_new_type'] ) : '';
+		if ( ! is_array( $posted ) ) {
+			$posted = array();
+		}
+		if ( ! is_string( $new_label ) ) {
+			$new_label = '';
+		}
+		if ( ! is_string( $new_type ) ) {
+			$new_type = '';
+		}
+
+		$result = DetailFields::apply_form( $this->detail_fields(), $posted, $new_label, $new_type );
+		update_option( DetailFields::OPTION, $result['fields'] );
+
+		$args = array(
+			'post_type'  => self::POST_TYPE,
+			'page'       => DetailFields::PAGE_SLUG,
+			'csm_notice' => 'saved',
+		);
+		if ( '' !== $result['error'] ) {
+			$args['csm_error'] = $result['error'];
+		}
+		wp_safe_redirect( add_query_arg( $args, admin_url( 'edit.php' ) ) );
+		exit;
+	}
+
+	/**
+	 * @param string $error Error code from the field form.
+	 * @return string
+	 */
+	private static function detail_fields_error_notice( $error ): string {
+		$messages = array(
+			'empty_key' => __( 'That label needs a letter or number.', 'case-study-manager' ),
+			'reserved'  => __( 'That label uses a reserved field.', 'case-study-manager' ),
+			'duplicate' => __( 'That key already exists.', 'case-study-manager' ),
+			'bad_type'  => __( 'Choose text, number, or currency.', 'case-study-manager' ),
+		);
+		if ( ! isset( $messages[ $error ] ) ) {
+			return '';
+		}
+		return '<div class="notice notice-error"><p>' . esc_html( $messages[ $error ] ) . '</p></div>';
+	}
+
+	/**
+	 * @param string $type Field type.
+	 * @return string
+	 */
+	private static function detail_type_label( $type ): string {
+		if ( 'location' === $type ) {
+			return __( 'City and state', 'case-study-manager' );
+		}
+		if ( 'number' === $type ) {
+			return __( 'Number', 'case-study-manager' );
+		}
+		if ( 'currency' === $type ) {
+			return __( 'Currency', 'case-study-manager' );
+		}
+		return __( 'Text', 'case-study-manager' );
+	}
+
+	/**
+	 * @param array<string, string> $field Field definition.
+	 * @return string
+	 */
+	private static function detail_key_html( array $field ): string {
+		if ( 'builtin' === $field['source'] && 'location' === $field['id'] ) {
+			return '<code>' . esc_html( self::META_LOCATION_CITY ) . '</code>, <code>' . esc_html( self::META_LOCATION_STATE ) . '</code>';
+		}
+		if ( 'builtin' === $field['source'] && 'type' === $field['id'] ) {
+			return '<code>' . esc_html( self::META_CASE_TYPE ) . '</code>';
+		}
+		if ( 'builtin' === $field['source'] && 'repair_amount' === $field['id'] ) {
+			return '<code>' . esc_html( self::META_REPAIR_AMOUNT ) . '</code>';
+		}
+		if ( 'custom' === $field['source'] && isset( $field['meta_key'] ) ) {
+			return '<code>' . esc_html( $field['meta_key'] ) . '</code>';
+		}
+		return '';
 	}
 }

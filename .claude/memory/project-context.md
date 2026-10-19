@@ -22,6 +22,7 @@ Case Study Manager is a WordPress plugin in this repository root (not nested in 
 - Post type `case_study`, archive slug `case-studies`, REST enabled, Elementor support.
 - Taxonomy `case_study_category`, hierarchical.
 - Meta `_ra_location_city`, `_ra_location_state`, `_ra_case_type`, `_ra_repair_amount`, derived `_ra_location_full`.
+- Extra detail fields live in the option `csm_detail_fields` and use `_csm_*` keys. Administrators edit that list. Editors fill values.
 - The `_ra_` prefix matches older snippet data. It is not an ownership mark.
 - Admin UI: metabox "Case Study Details", list columns, repair amount sortable as a number.
 - Styles: `assets/css/admin-metabox.css`, enqueued only on case study `post.php` and `post-new.php`.

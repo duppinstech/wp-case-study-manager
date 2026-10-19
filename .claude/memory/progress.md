@@ -32,4 +32,20 @@ WordPress 7.1.3. The published page and `[case_study_details]` showed location, 
 
 ## Next
 
-Packaging or installing 1.2.0 waits until Odell asks. WordPress integration tests are covered by the Docker pass above; they are not a checked-in PHPUnit suite.
+Packaging, tagging, or installing 1.3.0 waits until Odell asks. WordPress integration tests are not a checked-in PHPUnit suite. The case-study-manager-local Docker project was not running for the 1.3.0 pass.
+
+## 2026-10-18 — Custom detail fields 1.3.0
+
+Administrators can add text, number, and currency rows under Case Studies → Detail fields. Built-in `_ra_*` keys stay. `php tests/detail-rows-test.php` passed (31 checks). `composer lint` passed on the new field class and the plugin class.
+
+| Department | Verdict | Security after | Notes |
+|------------|---------|----------------|-------|
+| Quality | clear | clear | Row script covers the field list. Metabox, REST, and uninstall were not run in WordPress. |
+| Product | clear | clear | Still for RAHyman. `_ra_*` keys unchanged. No price. |
+| Privacy | clear | clear | Custom fields are public on the published page and in REST. Password-protected and unpublished posts stay hidden. |
+| Legal | changes-requested | clear | `OWNERSHIP.md` in the working tree disagrees with the copyright lines. Engineering does not edit it until Odell picks one formula. The 1.3.0 code was not blocked. |
+| Finance | clear | clear | Currency rows are job figures. No plugin price. |
+| Support | clear | clear | FAQ, uninstall, and the Detail fields screen match the code. |
+| Marketing | clear | clear | Claims match. No paid tier. |
+| Accessibility | clear | clear | Labels and the location fieldset are named. Reviewed from source, not in a browser. |
+| Release | clear | clear | Header, fallback, stable tag, and changelog are 1.3.0. No upload. |

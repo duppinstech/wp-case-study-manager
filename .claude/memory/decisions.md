@@ -38,6 +38,10 @@ Job repair amounts are client content, not Duppins Technology's fee.
 
 After engineering, department agents review in the order in `AGENTS.md`. `security-reviewer` runs after each of them. A new license, a new price, or an upload to a live site still waits for Odell. Page visibility, the RAHyman-only scope, and the absence of an in-plugin price are already decided.
 
+## 2026-10-18 — Custom detail fields
+
+Administrators (`manage_options`) can add text, number, and currency rows under Case Studies → Detail fields. The list is the option `csm_detail_fields`. Custom values use new `_csm_*` keys. The five `_ra_*` keys stay, including derived `_ra_location_full`. A missing option keeps the 1.2.0 rows. Custom fields are public on the published page and in REST, the same as city, type, and repair amount. Removing a field from the list hides it and does not delete stored values. Uninstall still leaves posts, terms, meta, and this option.
+
 ## Architecture
 
 One singleton class. No custom tables. No Composer framework. Version is read from the plugin header. Current release is 1.2.0. The single case study page and `[case_study_details]` render location, type, and repair amount.

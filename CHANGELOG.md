@@ -7,6 +7,13 @@ and this project uses the version in the plugin header.
 
 ## [Unreleased]
 
+## [1.3.0]
+
+### Added
+
+- Case Studies → Detail fields, so an administrator can add text, number, and currency rows to the case study page.
+- Custom rows use a `_csm_*` key. Location, type, and repair amount stay on their `_ra_*` keys.
+
 ## [1.2.1]
 
 ### Added
