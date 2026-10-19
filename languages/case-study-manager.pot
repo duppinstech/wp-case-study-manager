@@ -1,7 +1,7 @@
 # Copyright (C) 2026 Odell Duppins / Duppins Technology
 msgid ""
 msgstr ""
-"Project-Id-Version: Case Study Manager 1.2.0\n"
+"Project-Id-Version: Case Study Manager 1.3.0\n"
 "Report-Msgid-Bugs-To: odell@duppinstech.com\n"
 "POT-Creation-Date: 2026-10-14 22:45-0400\n"
 "MIME-Version: 1.0\n"
@@ -143,4 +143,112 @@ msgstr ""
 
 #: includes/class-case-study-manager-plugin.php:467
 msgid "e.g., Remodel, Roofing, Foundation Repair"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "A published case study page and the REST API will show the value."
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Add a detail field"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Built-in fields stay on the case study."
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Choose text, number, or currency."
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "City"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "City and state"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Currency"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Detail fields"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Detail fields saved."
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Key"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Label"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Label for %s"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Number"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Order"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Order for %s"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Remove"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Remove %s"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Save detail fields"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Sorry, you are not allowed to manage these fields."
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "State"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Text"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "That key already exists."
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "That label needs a letter or number."
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "That label uses a reserved field."
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "The key is created from the label, starts with _csm_, and cannot be changed. Example: Insurance carrier is stored as"
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "These fields appear on the published case study page and in the REST API, the same as city, type, and repair amount. There is no private setting."
+msgstr ""
+
+#: includes/class-case-study-manager-plugin.php
+msgid "Removing a custom field hides it. Values already saved on case studies stay in the database."
 msgstr ""

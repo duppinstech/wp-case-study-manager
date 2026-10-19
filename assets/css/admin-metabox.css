@@ -9,6 +9,24 @@
 	font-weight: 600;
 }
 
+.csm-metabox-group {
+	grid-column: 1 / -1;
+	display: grid;
+	grid-template-columns: 180px 1fr;
+	gap: 10px 14px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	min-width: 0;
+}
+
+.csm-metabox-group legend {
+	grid-column: 1 / -1;
+	font-size: inherit;
+	font-weight: 600;
+	padding: 0;
+}
+
 .csm-metabox-grid input[type="text"],
 .csm-metabox-grid input[type="number"] {
 	width: 100%;

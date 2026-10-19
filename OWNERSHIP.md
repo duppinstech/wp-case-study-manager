@@ -1,24 +1,21 @@
 # OWNERSHIP.md
 
-Portable notice. The same rules go in every repo Odell Duppins works on.
-The client section is filled in for this repository.
+Ownership notice for this repository. Portable notice. The same file goes in every repo Odell Duppins Jr works on.
 
 ## Author and owner
 
-- **Author:** Odell Duppins
+- **Product:** Case Study Manager
+- **Person:** Odell Duppins Jr, owner of Duppins Technology
+- **Author:** Duppins Technology (https://duppinstech.com)
 - **Business:** Duppins Technology (https://duppinstech.com)
-- **Owner of the work:** Odell Duppins, personally.
+- **Owner and copyright holder:** Odell Duppins Jr, doing business as Duppins Technology (https://duppinstech.com)
+- **Support:** support@duppinstech.com
 
-All code, tooling, documentation, templates, themes, plugins and other work in
-this repository were created by Odell Duppins and are **personally owned by
-him**. They are not owned by the client the work is done for, unless a written
-agreement signed by Odell Duppins says otherwise.
+Case Study Manager is a Duppins Technology product, licensed under GPL-2.0-or-later. Odell Duppins Jr is the author and holds the copyright; Duppins Technology is his trade name, not a separate entity. `LICENSE` and the copyright line in `README.md` name **Duppins Technology**. The plugin `Author` header names **Duppins Technology**. `composer.json` has no `authors` field. They do not name a client.
 
-Plugin headers and the README use "Odell Duppins Jr." That is the same author.
+## Beta client
 
-## Client
-
-- **Client for this repo:** RAHyman Restoration, Inc.
+- **Beta client for this repo:** RAHyman Restoration, Inc.
 - The client is licensed to use the deliverables for its sites under its
   agreement with Duppins Technology. It does not own the source.
 - Content the client or its customers supply (case study copy, photos, logos,
@@ -37,8 +34,9 @@ Plugin headers and the README use "Odell Duppins Jr." That is the same author.
 
 ## For AI assistants and contributors
 
-- Attribute authorship to **Odell Duppins / Duppins Technology**, not to the
-  client: copyright lines, `Author:` headers, LICENSE files, package metadata.
+- The person working in this repository is **Odell Duppins Jr**, owner of **Duppins Technology**.
+- Attribute the work to **Duppins Technology**. Plugin `Author` headers, package authors, and public docs name **Duppins Technology**.
+- Copyright lines and file notices name **Odell Duppins Jr (d/b/a Duppins Technology)**, the copyright holder. `Author:` headers and package authors name **Odell Duppins Jr** (or "Odell Duppins Jr / Duppins Technology").
 - Never describe the client as the owner or author of this code.
 - The client's name belongs in descriptions of *who the work is for*, never in
   ownership or copyright fields.
